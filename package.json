@@ -11,6 +11,10 @@
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/zhongyue2332/water-commit"
+  },
   "activationEvents": [],
   "main": "./extension.js",
   "contributes": {

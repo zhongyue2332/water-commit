@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+*.vsix
 markettoken.txt
 
 # Editor directories and files

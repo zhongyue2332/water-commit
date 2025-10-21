@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/zhongyue2332/water-commit"
+    "url": "https://gitee.com/zhongyue2332/water-commit.git"
   },
   "activationEvents": [],
   "main": "./extension.js",

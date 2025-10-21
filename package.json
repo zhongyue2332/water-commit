@@ -1,0 +1,49 @@
+{
+  "name": "water-commit",
+  "displayName": "water-commit",
+  "description": "Anhui Wote Water Science and Technology Co., Ltd Commit Standard Tool",
+  "publisher": "zhongy",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "icon": "image/logo.png",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "water-commit.start",
+        "title": "开始提交",
+        "category": "WaterCommit",
+        "icon": "$(hubot)"
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "when": "scmProvider == git",
+          "command": "water-commit.start",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "pnpm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "1.100.0",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.36.0",
+    "globals": "^16.4.0"
+  }
+}

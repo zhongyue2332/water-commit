@@ -3,7 +3,7 @@
   "displayName": "water-commit",
   "description": "Anhui Wote Water Science and Technology Co., Ltd Commit Standard Tool",
   "publisher": "zhongy",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/zhongyue2332/water-commit.git"
+    "url": "https://github.com/zhongyue2332/water-commit.git"
   },
   "activationEvents": [],
   "main": "./extension.js",

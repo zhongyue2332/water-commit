@@ -45,29 +45,29 @@
 
 输入 `WaterCommit: 开始提交` 并回车，即可启动插件，如下图：
 
-![方法一](https://gitee.com/zhongyue2332/water-commit/raw/main/image/img1.png)
+![方法一](image/img1.png)
 
 #### 方法二：通过源代码管理 (SCM) 按钮
 
 1. 打开左侧边栏的 **源代码管理** 图标（Git 标志）。  
 2. 点击标题栏中的对应的按钮。
 
-![方法二](https://gitee.com/zhongyue2332/water-commit/raw/main/image/img2.png)
+![方法二](image/img2.png)
 
 ### 💬 3. 输入提交信息
 插件将依次引导你完成：
 1. 选择提交类型（Type）  
 2. 选择提交范围（Scope，可为空）
 
-![提交范围](https://gitee.com/zhongyue2332/water-commit/raw/main/image/img3.png)
+![提交范围](image/img3.png)
 
 3. 输入提交信息（Subject）
 
-![提交信息](https://gitee.com/zhongyue2332/water-commit/raw/main/image/img4.png)
+![提交信息](image/img4.png)
 
 4. 回车进行本次提交（Commit）
 
-![成功提示](https://gitee.com/zhongyue2332/water-commit/raw/main/image/img5.png)
+![成功提示](image/img5.png)
 
 
 ## 🧩 自定义配置
@@ -122,10 +122,17 @@
   "waterCommit.autoSyncRemote": false
 }
 ```
-![设置](https://gitee.com/zhongyue2332/water-commit/raw/main/image/img6.png)
+![设置](image/img6.png)
 
 
 ## 🕒 Changelog
+
+### 0.0.3
+
+**发布日期:** 2025-10-22
+
+**新增功能：**
+- 📎 修改README.md文档里图片地址
 
 ### 0.0.2
 

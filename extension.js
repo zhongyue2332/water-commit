@@ -10,6 +10,7 @@ async function getWorkspaceRoot() {
   const gitPath = path.join(rootPath, '.git');
   return fs.existsSync(gitPath) ? rootPath : null;
 }
+
 async function pickType(config) {
   let typePick = null;
 
@@ -31,6 +32,109 @@ async function pickType(config) {
   return typePick;
 }
 
+function execPromise(cmd, cwd) {
+  return new Promise((resolve, reject) => {
+    exec(cmd, { cwd }, (error, stdout, stderr) => {
+      if (error) {
+				reject(stderr || error.message)
+			} else {
+				resolve(stdout.trim());
+			}
+    });
+  });
+}
+
+async function syncToRemote(cwd, finalMessage) {
+  try {
+		const remotesRaw = await execPromise('git remote', cwd);
+		const remotes = remotesRaw.split('\n').filter(Boolean);
+		if (!remotes.length) {
+			vscode.window.showWarningMessage('【waterCommit提示】：未检测到远程仓库，请先进行配置，已跳过git push。');
+			return;
+		}
+		const remoteName = remotes.includes('origin') ? 'origin' : remotes[0];
+    // 获取当前分支名
+    const branch = await execPromise('git rev-parse --abbrev-ref HEAD', cwd);
+
+		const result = await vscode.window.withProgress(
+			{
+				location: vscode.ProgressLocation.Notification,
+				title: `【waterCommit提示】：正在同步分支 ${branch} 到远程仓库...`,
+				cancellable: false,
+			},
+			async (progress) => {
+				try {
+					progress.report({ message: '正在推送中，请稍候...' });
+					// 检查远程是否存在该分支
+					const remoteBranches = await execPromise(`git ls-remote --heads ${remoteName}`, cwd);
+					const branchExists = remoteBranches.includes(`refs/heads/${branch}`);
+
+					if (branchExists) {
+						await execPromise(`git push ${remoteName} ${branch}`, cwd);
+					} else {
+						await execPromise(`git push -u ${remoteName} ${branch}`, cwd);
+					}
+					return { success: true }
+				} catch (err){
+					return { success: false, message: err };
+				}
+			}
+		);
+
+		setTimeout(() => {
+			if (result.success) {
+				vscode.window.showInformationMessage(`【waterCommit提示】：✅ 提交成功，分支已同步：${finalMessage}`);
+			} else {
+				vscode.window.showErrorMessage(`【waterCommit提示】：❌ 推送失败：${result.message}`);
+			}
+		}, 1000);
+		
+  } catch (err) {
+    vscode.window.showErrorMessage(`【waterCommit提示】：分支同步失败：${err}`);
+  }
+}
+
+async function commitTask(finalMessage, cwd) {
+	const config = vscode.workspace.getConfiguration('waterCommit');
+  const autoGitAdd = config.get('autoGitAdd', true);
+  const autoSyncRemote = config.get('autoSyncRemote', false);
+  try {
+
+    const staged = await execPromise('git diff --cached --name-only', cwd);
+
+    if (!staged) {
+      // 暂存区为空，检测工作区是否有改动，即是否有改动的文件
+      const changed = await execPromise('git status --porcelain', cwd);
+      if (!changed) {
+        vscode.window.showInformationMessage('【waterCommit提示】：😄 没有可提交的更改。');
+        return;
+      }
+			// 文件有更改，但没添加到暂存区，根据autoGitAdd确定是否执行git add -A
+			if (autoGitAdd) {
+        await execPromise('git add -A', cwd);
+      } else {
+        vscode.window.showWarningMessage('【waterCommit提示】：暂存区为空，请将文件添加暂存区或将waterCommit.autoGitAdd配置为true。');
+        return;
+      }
+    }
+
+    const output = await execPromise(`git commit -m "${finalMessage}"`, cwd);
+
+    if (output.includes('nothing to commit') || output.includes('working tree clean')) {
+      vscode.window.showInformationMessage('【waterCommit提示】：😄 没有可提交的内容，工作区干净。');
+			return
+    } 
+		// 是否自动同步分支
+    if (autoSyncRemote) {
+			// Step5: 同步远程仓库
+      await syncToRemote(cwd, finalMessage);
+    } else {
+			vscode.window.showInformationMessage(`【waterCommit提示】：✅ 提交成功：${finalMessage}`);
+		}
+  } catch (error) {
+    vscode.window.showErrorMessage(`【waterCommit提示】：提交失败：${error}`);
+  }
+}
 
 function activate(context) {
 
@@ -129,13 +233,7 @@ function activate(context) {
 			const finalMessage = `${typePick.emoji ? typePick.emoji + ' ' : ''}${typePick.name}${scopeText}: ${message}`;
 
 			// Step4: 执行 git commit
-			exec(`git commit -m "${finalMessage}"`, { cwd }, (error, stdout, stderr) => {
-			  if (error) {
-			    vscode.window.showErrorMessage(`【waterCommit提示】：提交失败：${stderr || error.message}`);
-			  } else {
-			    vscode.window.showInformationMessage(`【waterCommit提示】：✅ 提交成功：${finalMessage}`);
-			  }
-			});
+			await commitTask(finalMessage, cwd)
 		} catch (err) {
 			vscode.window.showErrorMessage(`【waterCommit提示】：出错啦：${err.message}`);
 		}

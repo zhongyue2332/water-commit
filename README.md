@@ -3,6 +3,10 @@
 一款为团队提供 **统一Git提交规范** 的VS Code插件。  
 帮助开发者在提交代码时快速生成符合规范的提交信息，让提交历史更清晰、更可读。
 
+![Version](https://img.shields.io/visual-studio-marketplace/v/zhongy.water-commit?color=2196F3)
+![Downloads](https://img.shields.io/visual-studio-marketplace/d/zhongy.water-commit?color=2196F3)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+
 ## ✨ 功能特性
 
 - 🎉 内置 `type` 和 `scope`，开箱即用，0配置
@@ -11,6 +15,8 @@
 - 💬 支持选择提交类型、作用域并输入提交说明
 - 🪄 自动拼接符合约定式提交（Conventional Commit）的信息
 - 💎 支持 Emoji 类型标识（例如 ✨ feat、🐛 fix、🎨 ui）
+- 📋 暂存区无内容时自动执行 `git add -A`，默认开启，可通过配置 `waterCommit.autoGitAdd=false` 关闭
+- 🔄 支持自动推送远程仓库，默认关闭，可通过配置 `waterCommit.autoSyncRemote=true` 启用
 
 ## 🧩 环境要求
 
@@ -66,7 +72,9 @@
 
 ## 🧩 自定义配置
 
-你可以在项目根目录添加 `.commitrc` 文件来自定义提交类型与作用域，以下是预设的配置：
+### 🔧 1. `.commitrc` 自定义提交类型与作用域
+
+你可以在项目根目录添加 `.commitrc` 文件来自定义提交类型与作用域，该文件需要 `json` 格式，以下是插件预设的配置：
 
 ```json
 {
@@ -102,7 +110,32 @@
 }
 ```
 
+### ⚙️ 2. VS Code 插件配置项
+在 settings.json（用户或工作区设置）中，可自定义 Water Commit 的行为：
+
+```
+{
+  // 当暂存区为空时自动执行 `git add -A` 后再提交。
+  "waterCommit.autoGitAdd": true,
+
+  // 提交完成后是否自动同步当前分支到远程仓库。
+  "waterCommit.autoSyncRemote": false
+}
+```
+![设置](https://gitee.com/zhongyue2332/water-commit/raw/main/image/img6.png)
+
+
 ## 🕒 Changelog
+
+### 0.0.2
+
+**发布日期:** 2025-10-22
+
+**新增功能：**
+- 📋 提交前暂存区无内容自动执行 git add -A，无需手动暂存
+- 🔄 支持自动推送到远程仓库，需手动启用:`waterCommit.autoSyncRemote=true`
+- ⚠️ 推送失败时提供详细错误信息
+- ⚙️ 自动暂存和自动推送支持用户配置
 
 ### 0.0.1
 
@@ -116,4 +149,4 @@
 - 💎 Emoji 类型前缀支持  
 
 ## 🧑‍💻 作者
-**zhongy**
+**[zhongy](https://marketplace.visualstudio.com/publishers/zhongy)**

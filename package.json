@@ -3,7 +3,7 @@
   "displayName": "water-commit",
   "description": "Anhui Wote Water Science and Technology Co., Ltd Commit Standard Tool",
   "publisher": "zhongy",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -34,6 +34,22 @@
           "group": "navigation"
         }
       ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Water Commit Configuration",
+      "properties": {
+        "waterCommit.autoGitAdd": {
+          "type": "boolean",
+          "default": true,
+          "description": "当暂存区为空时自动执行 `git add -A` 后再提交。"
+        },
+        "waterCommit.autoSyncRemote": {
+          "type": "boolean",
+          "default": false,
+          "description": "提交完成后是否自动同步当前分支到远程仓库。"
+        }
+      }
     }
   },
   "scripts": {

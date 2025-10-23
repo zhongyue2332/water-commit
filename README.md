@@ -3,7 +3,7 @@
 一款为团队提供 **统一Git提交规范** 的VS Code插件。  
 帮助开发者在提交代码时快速生成符合规范的提交信息，让提交历史更清晰、更可读。
 
-![Version](https://img.shields.io/visual-studio-marketplace/v/zhongy.water-commit?color=2196F3)
+![Version](https://img.shields.io/github/v/release/zhongyue2332/water-commit)
 ![Downloads](https://img.shields.io/visual-studio-marketplace/d/zhongy.water-commit?color=2196F3)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 

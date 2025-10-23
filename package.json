@@ -3,7 +3,7 @@
   "displayName": "water-commit",
   "description": "Anhui Wote Water Science and Technology Co., Ltd Commit Standard Tool",
   "publisher": "zhongy",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -21,12 +21,19 @@
     "commands": [
       {
         "command": "water-commit.start",
-        "title": "开始提交",
+        "title": "WaterCommit: 开始提交",
         "category": "WaterCommit",
         "icon": "$(hubot)"
       }
     ],
     "menus": {
+      "editor/context": [
+        {
+          "when": "editorTextFocus",
+          "command": "water-commit.start",
+          "group": "navigation"
+        }
+      ],
       "scm/title": [
         {
           "when": "scmProvider == git",

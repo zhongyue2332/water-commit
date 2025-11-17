@@ -216,23 +216,31 @@ function activate(context) {
 				return;
 			}
 
-			// Step3: 输入提交描述
+			// Step3: 输入提交标题
 			const message = await vscode.window.showInputBox({
 				placeHolder: '请输入提交描述，例如：新增xx功能，修复xx问题，修改xx描述',
-				prompt: '输入提交信息',
-				validateInput: text => (text.trim() ? null : '提交信息不能为空')
+				prompt: '输入提交标题（subject）',
+				validateInput: text => (text.trim() ? null : '提交标题不能为空')
 			});
 
 			if (!message) {
 				vscode.window.showInformationMessage('【waterCommit提示】：已取消提交');
 				return;
 			}
+			
+			// Step4: 输入提交详情
+			const msgbody = await vscode.window.showInputBox({
+				placeHolder: '请输入提交详情，注意换行请用\\n',
+				prompt: '(可选)输入提交详情（body）',
+			});
 
 			// 拼接完整提交信息，如果scope选择无，去掉括号
 			const scopeText = scopePick.name === '' ? '' : `(${scopePick.name})`
-			const finalMessage = `${typePick.emoji ? typePick.emoji + ' ' : ''}${typePick.name}${scopeText}: ${message}`;
+			const bodyText = msgbody ? '\n\n' + msgbody.replace(/\\n/g, '\n') : ''
 
-			// Step4: 执行 git commit
+			const finalMessage = `${typePick.emoji ? typePick.emoji + ' ' : ''}${typePick.name}${scopeText}: ${message}${bodyText}`;
+
+			// Step5: 执行 git commit
 			await commitTask(finalMessage, cwd)
 		} catch (err) {
 			vscode.window.showErrorMessage(`【waterCommit提示】：出错啦：${err.message}`);

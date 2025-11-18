@@ -236,6 +236,12 @@ function activate(context) {
 				prompt: '(可选)输入提交详情（body）',
 			});
 
+			// 按esc取消提交
+			if (msgbody === undefined) {
+				vscode.window.showInformationMessage('【waterCommit提示】：已取消提交');
+				return;
+			}
+
 			// 拼接完整提交信息，如果scope选择无，去掉括号
 			const scopeText = scopePick.name === '' ? '' : `(${scopePick.name})`
 

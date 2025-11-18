@@ -3,7 +3,7 @@
   "displayName": "water-commit",
   "description": "Anhui Wote Water Science and Technology Co., Ltd Commit Standard Tool",
   "publisher": "zhongy",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -62,7 +62,8 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "pnpm run lint",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "build": "vsce package"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

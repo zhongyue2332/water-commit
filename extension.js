@@ -44,7 +44,7 @@ function execPromise(cmd, cwd) {
   });
 }
 
-async function syncToRemote(cwd, finalMessage) {
+async function syncToRemote(cwd, titleMsg) {
   try {
 		const remotesRaw = await execPromise('git remote', cwd);
 		const remotes = remotesRaw.split('\n').filter(Boolean);
@@ -83,7 +83,7 @@ async function syncToRemote(cwd, finalMessage) {
 
 		setTimeout(() => {
 			if (result.success) {
-				vscode.window.showInformationMessage(`【waterCommit提示】：✅ 提交成功，分支已同步：${finalMessage}`);
+				vscode.window.showInformationMessage(`【waterCommit提示】：✅ 提交成功，分支已同步：${titleMsg}`);
 			} else {
 				vscode.window.showErrorMessage(`【waterCommit提示】：❌ 推送失败：${result.message}`);
 			}
@@ -94,7 +94,7 @@ async function syncToRemote(cwd, finalMessage) {
   }
 }
 
-async function commitTask(finalMessage, cwd) {
+async function commitTask(titleMsg, finalMessage, cwd) {
 	const config = vscode.workspace.getConfiguration('waterCommit');
   const autoGitAdd = config.get('autoGitAdd', true);
   const autoSyncRemote = config.get('autoSyncRemote', false);
@@ -118,7 +118,9 @@ async function commitTask(finalMessage, cwd) {
       }
     }
 
-    const output = await execPromise(`git commit -m "${finalMessage}"`, cwd);
+		const finalCommand = `git commit ${finalMessage}`
+
+    const output = await execPromise(finalCommand, cwd);
 
     if (output.includes('nothing to commit') || output.includes('working tree clean')) {
       vscode.window.showInformationMessage('【waterCommit提示】：😄 没有可提交的内容，工作区干净。');
@@ -127,9 +129,9 @@ async function commitTask(finalMessage, cwd) {
 		// 是否自动同步分支
     if (autoSyncRemote) {
 			// Step5: 同步远程仓库
-      await syncToRemote(cwd, finalMessage);
+      await syncToRemote(cwd, titleMsg);
     } else {
-			vscode.window.showInformationMessage(`【waterCommit提示】：✅ 提交成功：${finalMessage}`);
+			vscode.window.showInformationMessage(`【waterCommit提示】：✅ 提交成功：${titleMsg}`);
 		}
   } catch (error) {
     vscode.window.showErrorMessage(`【waterCommit提示】：提交失败：${error}`);
@@ -218,7 +220,7 @@ function activate(context) {
 
 			// Step3: 输入提交标题
 			const message = await vscode.window.showInputBox({
-				placeHolder: '请输入提交描述，例如：新增xx功能，修复xx问题，修改xx描述',
+				placeHolder: '请输入提交标题，例如：新增xx功能，修复xx问题，修改xx样式',
 				prompt: '输入提交标题（subject）',
 				validateInput: text => (text.trim() ? null : '提交标题不能为空')
 			});
@@ -236,12 +238,24 @@ function activate(context) {
 
 			// 拼接完整提交信息，如果scope选择无，去掉括号
 			const scopeText = scopePick.name === '' ? '' : `(${scopePick.name})`
-			const bodyText = msgbody ? '\n\n' + msgbody.replace(/\\n/g, '\n') : ''
 
-			const finalMessage = `${typePick.emoji ? typePick.emoji + ' ' : ''}${typePick.name}${scopeText}: ${message}${bodyText}`;
+			let bodyText = '';
+			if (msgbody) {
+				const bodyArr = msgbody.split('\\n')
+				for (let i = 0; i < bodyArr.length; i++) {
+					if (bodyArr[i].trim()) {
+						const line = ` -m "${bodyArr[i].trim()}"`
+						bodyText += line
+					}
+				}
+			}
+
+			const titleMsg = `${typePick.emoji ? typePick.emoji + ' ' : ''}${typePick.name}${scopeText}: ${message}`
+
+			const finalMessage = `-m "${titleMsg}"${bodyText}`;
 
 			// Step5: 执行 git commit
-			await commitTask(finalMessage, cwd)
+			await commitTask(titleMsg, finalMessage, cwd)
 		} catch (err) {
 			vscode.window.showErrorMessage(`【waterCommit提示】：出错啦：${err.message}`);
 		}
